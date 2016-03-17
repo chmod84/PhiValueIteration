@@ -133,8 +133,8 @@ int main(int argc, char **argv) {
             error("ERROR reading from socket");
             break;
         }
-        printf("1 server received %d bytes\n", n);
-        printf("size=%u\n", size);
+//        printf("1 server received %d bytes\n", n);
+//        printf("size=%u\n", size);
 
         // Reading the hashcode of the current state
         int hashcode;
@@ -143,8 +143,8 @@ int main(int argc, char **argv) {
             error("ERROR reading from socket");
             break;
         }
-        printf("2 server received %d bytes\n", n);
-        printf("hashcode=%d\n", hashcode);
+//        printf("2 server received %d bytes\n", n);
+//        printf("hashcode=%d\n", hashcode);
 
         // Reading the terminal attribute of the current state
         int terminal;
@@ -153,8 +153,8 @@ int main(int argc, char **argv) {
             error("ERROR reading from socket");
             break;
         }
-        printf("3 server received %d bytes\n", n);
-        printf("terminal=%d\n", terminal);
+//        printf("3 server received %d bytes\n", n);
+//        printf("terminal=%d\n", terminal);
         if (!terminal) {
             int i;
             for (i = 0; i < size; i++) {
@@ -165,8 +165,8 @@ int main(int argc, char **argv) {
                     error("ERROR reading from socket");
                     exit(-1);
                 }
-                printf("4 server received %d bytes\n", n);
-                printf("\tnexthash=%d\n", nexthash);
+//                printf("4 server received %d bytes\n", n);
+//                printf("\tnexthash=%d\n", nexthash);
 
                 // Reading the probability value of the next state
                 double prob;
@@ -175,8 +175,8 @@ int main(int argc, char **argv) {
                     error("ERROR reading from socket");
                     exit(-1);
                 }
-                printf("5 server received %d bytes\n", n);
-                printf("\tprob=%f\n", prob);
+//                printf("5 server received %d bytes\n", n);
+//                printf("\tprob=%f\n", prob);
 
                 // Reading the reward value of the next state
                 double reward;
@@ -185,11 +185,11 @@ int main(int argc, char **argv) {
                     error("ERROR reading from socket");
                     exit(-1);
                 }
-                printf("6 server received %d bytes\n", n);
-                printf("\treward=%f\n", reward);
+//                printf("6 server received %d bytes\n", n);
+//                printf("\treward=%f\n", reward);
             }
         }
-        printf("\n");
+//        printf("\n");
     } while (n > 0);
     close(connfd);
 }
