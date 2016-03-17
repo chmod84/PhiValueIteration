@@ -10,6 +10,27 @@
 #ifndef STATE_H
 #define	STATE_H
 
+struct action {
+    int hashcode;
+    int next_states_size;
+    int* next_states;
+    double* probs;
+    double* rewards;
+};
+
+struct state {
+    int hashcode;
+    int terminal;
+    int action_size;
+    struct action* actions;
+    double v;
+    UT_hash_handle hh;
+};
+
+static struct state* states = NULL;
+
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -23,13 +44,4 @@ extern "C" {
 
 #endif	/* STATE_H */
 
-struct state {
-    int hashcode;
-    int next_states_size;
-    int terminal;
-    int* next_states;
-    double* probs;
-    double* rewards;
-    double v;
-    UT_hash_handle hh;
-};
+

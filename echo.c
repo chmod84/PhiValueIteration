@@ -4,6 +4,7 @@
  */
 
 #include <stdio.h>
+#include "state.h"
 
 
 #if 0
@@ -41,7 +42,6 @@ struct hostent {
 /*
  * error - wrapper for perror
  */
-
 
 int main(int argc, char **argv) {
     receive_from_controller();

@@ -15,6 +15,27 @@ void error(char *msg) {
     //    exit(1);
 }
 
+
+void print_states(struct state* states) {
+    struct state* state;
+    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
+        printf("State %d: size of the actions: %d\n", state->hashcode, state->action_size);
+        printf("\tisTerminal:%d\n", state->terminal);
+        int j;
+        for (j = 0; j < state->action_size; j++) {
+            struct action action = state->actions[j];
+            printf("\tAction %d\n", action.hashcode);
+            int k;
+            for (k = 0; k < action.next_states_size; k++) {
+                printf("\t\tnext state hash: %d\n", action.next_states[k]);
+                printf("\t\tprob: %f\n", action.probs[k]);
+                printf("\t\treward: %f\n", action.rewards[k]);
+            }
+
+        }
+    }
+}
+
 int receive_from_controller() {
     int listenfd; /* listening socket */
     int connfd; /* connection socket */
@@ -89,25 +110,35 @@ int receive_from_controller() {
         error("ERROR in retrieving the state space size. Exiting\0");
         exit(-1);
     }
-    printf("state space size: %d\n",state_space_size);
-    struct state* states = NULL;
+    printf("state space size: %d\n", state_space_size);
     int i;
     for (i = 0; i < state_space_size; i++) {
         struct state* state = malloc(sizeof (struct state));
-        n = read(connfd, &(state->hashcode), sizeof(int));
-//        printf("n hashcode: %d, hashcode: %d\n", n, state->hashcode);
-        n = read(connfd, &(state->next_states_size), sizeof(int));
-//        printf("n next_state_size: %d, next_state_size: %d\n", n, state->next_states_size);
-        n = read(connfd, &(state->terminal), sizeof(int));
-//        printf("n terminal: %d, terminal: %d\n", n, state->terminal);
-        int next_states_size = state->next_states_size;
-        if (next_states_size > 0) {
-            state->next_states = malloc(next_states_size * sizeof (int));
-            state->probs = malloc(next_states_size * sizeof (double));
-            state->rewards = malloc(next_states_size * sizeof (double));
-            read(connfd, state->next_states, next_states_size * sizeof (int));
-            read(connfd, state->probs, next_states_size * sizeof (double));
-            read(connfd, state->rewards, next_states_size * sizeof (double));
+        //Using the hashcode as base pointer for a triple read
+        n = read(connfd, &(state->hashcode), 3* sizeof (int));
+        int action_size = state->action_size;
+//        printf("Actions size: %d\n", action_size);
+        if (action_size > 0) {
+            state->actions = malloc(action_size * sizeof (struct action));
+            int j;
+            for (j = 0; j < action_size; j++) {
+                struct action action = state->actions[j];
+                n = read(connfd, &(action.next_states_size), sizeof (int));
+//                printf("Next states size: %d\n", action.next_states_size);
+                //Trying to minimize the number of read
+                action.next_states = malloc(action.next_states_size * sizeof(int) + action.next_states_size*sizeof(double)*2);
+//                action.next_states = malloc(action.next_states_size * sizeof (int));
+                action.probs = (double*) action.next_states+action.next_states_size;
+                action.rewards = action.probs+action.next_states_size;
+                n = read(connfd, action.next_states, action.next_states_size * sizeof(int) + action.next_states_size*sizeof(double)*2);
+                n = read(connfd, &action.hashcode, sizeof (int));
+                int k;
+                for (k=0;k<action.next_states_size;k++) {
+//                    printf("next state %d: %d\n", k, action.next_states[k]);
+//                    printf("reward: %f\n", action.rewards[k]);
+//                    printf("probability: %f\n", action.probs[k]);
+                }
+            }
         }
         state->v = 0;
         HASH_ADD_INT(states, hashcode, state);
@@ -120,19 +151,6 @@ int receive_from_controller() {
     fprintf(stderr, "Transfer time: %u seconds %u milliseconds\n", seconds, useconds / 1000);
 
     close(connfd);
+//    print_states(states);
 }
 
-void print_states(struct state* states) {
-    struct state* state;
-    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
-        printf("State %d: size of next states: %d\n", state->hashcode, state->next_states_size);
-        printf("\tisTerminal:%d\n", state->terminal);
-        int j;
-        for (j = 0; j < state->next_states_size; j++) {
-            printf("\tNext state %d:\n", j);
-            printf("\t\thash: %d\n", state->next_states[j]);
-            printf("\t\tprob: %f\n", state->probs[j]);
-            printf("\t\treward: %f\n", state->rewards[j]);
-        }
-    }
-}
