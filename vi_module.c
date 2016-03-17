@@ -29,24 +29,26 @@ double perform_bellman_update(struct state* current_state) {
         if (q > max_q)
             max_q = q;
     }
+    current_state->v=max_q;
+    return max_q;
+}
 
-    int run_vi(struct state* states, int state_space_size, int iterations, double max_delta) {
-        double delta = 0;
-        struct state* current_state;
+int run_vi(struct state* states, int state_space_size, int iterations, double max_delta) {
+    double delta = 0;
+    struct state* current_state;
 
-        int i;
-        for (i = 0; i < iterations; i++) {
+    int i;
+    for (i = 0; i < iterations; i++) {
 
-            for (current_state = states; current_state != NULL; current_state = (struct state*) (current_state->hh.next)) {
+        for (current_state = states; current_state != NULL; current_state = (struct state*) (current_state->hh.next)) {
 
-                double max_q = perform_bellman_update(current_state);
-                double diff = fabs(max_q - current_state->v);
-                if (diff > delta)
-                    delta = diff;
-            }
-            
-            if (delta<max_delta)
-                break;
+            double max_q = perform_bellman_update(current_state);
+            double diff = fabs(max_q - current_state->v);
+            if (diff > delta)
+                delta = diff;
         }
+
+        if (delta < max_delta)
+            break;
     }
 }
