@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>state.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -12,8 +13,24 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="uthash" displayName="uthash" projectFiles="true">
+        <itemPath>uthash/libut.c</itemPath>
+        <itemPath>uthash/libut.h</itemPath>
+        <itemPath>uthash/ringbuf.c</itemPath>
+        <itemPath>uthash/ringbuf.h</itemPath>
+        <itemPath>uthash/utarray.h</itemPath>
+        <itemPath>uthash/uthash.h</itemPath>
+        <itemPath>uthash/utlist.h</itemPath>
+        <itemPath>uthash/utmm.c</itemPath>
+        <itemPath>uthash/utmm.h</itemPath>
+        <itemPath>uthash/utringbuffer.h</itemPath>
+        <itemPath>uthash/utstring.h</itemPath>
+        <itemPath>uthash/utvector.c</itemPath>
+        <itemPath>uthash/utvector.h</itemPath>
+      </logicalFolder>
       <itemPath>communication_module.c</itemPath>
       <itemPath>echo.c</itemPath>
+      <itemPath>vi_module.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -27,6 +44,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>uthash</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -43,6 +63,36 @@
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="state.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/libut.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/libut.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/ringbuf.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/ringbuf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utarray.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/uthash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utmm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/utmm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utringbuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utstring.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utvector.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/utvector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="vi_module.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -68,6 +118,36 @@
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="state.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/libut.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/libut.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/ringbuf.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/ringbuf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utarray.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/uthash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utmm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/utmm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utringbuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utstring.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="uthash/utvector.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="uthash/utvector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="vi_module.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

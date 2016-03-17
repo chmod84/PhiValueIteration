@@ -36,7 +36,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/communication_module.o \
-	${OBJECTDIR}/echo.o
+	${OBJECTDIR}/echo.o \
+	${OBJECTDIR}/uthash/libut.o \
+	${OBJECTDIR}/uthash/ringbuf.o \
+	${OBJECTDIR}/uthash/utmm.o \
+	${OBJECTDIR}/uthash/utvector.o \
+	${OBJECTDIR}/vi_module.o
 
 
 # C Compiler Flags
@@ -72,6 +77,31 @@ ${OBJECTDIR}/echo.o: echo.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/echo.o echo.c
+
+${OBJECTDIR}/uthash/libut.o: uthash/libut.c 
+	${MKDIR} -p ${OBJECTDIR}/uthash
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/libut.o uthash/libut.c
+
+${OBJECTDIR}/uthash/ringbuf.o: uthash/ringbuf.c 
+	${MKDIR} -p ${OBJECTDIR}/uthash
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/ringbuf.o uthash/ringbuf.c
+
+${OBJECTDIR}/uthash/utmm.o: uthash/utmm.c 
+	${MKDIR} -p ${OBJECTDIR}/uthash
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/utmm.o uthash/utmm.c
+
+${OBJECTDIR}/uthash/utvector.o: uthash/utvector.c 
+	${MKDIR} -p ${OBJECTDIR}/uthash
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/utvector.o uthash/utvector.c
+
+${OBJECTDIR}/vi_module.o: vi_module.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/vi_module.o vi_module.c
 
 # Subprojects
 .build-subprojects:

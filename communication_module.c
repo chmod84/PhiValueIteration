@@ -8,10 +8,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include "state.h"
 
 void error(char *msg) {
     perror(msg);
-//    exit(1);
+    //    exit(1);
 }
 
 int receive_from_controller() {
@@ -81,57 +82,36 @@ int receive_from_controller() {
 
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
-    do {
-        // Reading the size of the next states
-        unsigned int size;
-        n = read(connfd, &size, sizeof (int));
-        if (n <= 0) {
-            error("ERROR reading from socket 1");
-            break;
+
+    int state_space_size;
+    n = read(connfd, &state_space_size, sizeof (int));
+    if (n <= 0) {
+        error("ERROR in retrieving the state space size. Exiting\0");
+        exit(-1);
+    }
+    printf("state space size: %d\n",state_space_size);
+    struct state* states = NULL;
+    int i;
+    for (i = 0; i < state_space_size; i++) {
+        struct state* state = malloc(sizeof (struct state));
+        n = read(connfd, &(state->hashcode), sizeof(int));
+//        printf("n hashcode: %d, hashcode: %d\n", n, state->hashcode);
+        n = read(connfd, &(state->next_states_size), sizeof(int));
+//        printf("n next_state_size: %d, next_state_size: %d\n", n, state->next_states_size);
+        n = read(connfd, &(state->terminal), sizeof(int));
+//        printf("n terminal: %d, terminal: %d\n", n, state->terminal);
+        int next_states_size = state->next_states_size;
+        if (next_states_size > 0) {
+            state->next_states = malloc(next_states_size * sizeof (int));
+            state->probs = malloc(next_states_size * sizeof (double));
+            state->rewards = malloc(next_states_size * sizeof (double));
+            read(connfd, state->next_states, next_states_size * sizeof (int));
+            read(connfd, state->probs, next_states_size * sizeof (double));
+            read(connfd, state->rewards, next_states_size * sizeof (double));
         }
-        //        printf("1 server received %d bytes\n", n);
-        //        printf("size=%u\n", size);
-
-        // Reading the hashcode of the current state
-        int hashcode;
-        n = read(connfd, &hashcode, sizeof (int));
-
-        //        printf("2 server received %d bytes\n", n);
-        //        printf("hashcode=%d\n", hashcode);
-
-        // Reading the terminal attribute of the current state
-        int terminal;
-        n = read(connfd, &terminal, sizeof (int));
-
-        //        printf("3 server received %d bytes\n", n);
-        //        printf("terminal=%d\n", terminal);
-        if (!terminal) {
-            int i;
-            for (i = 0; i < size; i++) {
-                // Reading the hashcode value of the next state
-                int nexthash;
-                n = read(connfd, &nexthash, sizeof (int));
-
-                //                printf("4 server received %d bytes\n", n);
-                //                printf("\tnexthash=%d\n", nexthash);
-
-                // Reading the probability value of the next state
-                double prob;
-                n = read(connfd, &prob, sizeof (double));
-
-                //                printf("5 server received %d bytes\n", n);
-                //                printf("\tprob=%f\n", prob);
-
-                // Reading the reward value of the next state
-                double reward;
-                n = read(connfd, &reward, sizeof (double));
-
-                //                                printf("6 server received %d bytes\n", n);
-                //                printf("\treward=%f\n", reward);
-            }
-        }
-        //        printf("\n");
-    } while (n > 0);
+        state->v = 0;
+        HASH_ADD_INT(states, hashcode, state);
+    }
 
     gettimeofday(&tv2, NULL);
 
@@ -140,4 +120,19 @@ int receive_from_controller() {
     fprintf(stderr, "Transfer time: %u seconds %u milliseconds\n", seconds, useconds / 1000);
 
     close(connfd);
+}
+
+void print_states(struct state* states) {
+    struct state* state;
+    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
+        printf("State %d: size of next states: %d\n", state->hashcode, state->next_states_size);
+        printf("\tisTerminal:%d\n", state->terminal);
+        int j;
+        for (j = 0; j < state->next_states_size; j++) {
+            printf("\tNext state %d:\n", j);
+            printf("\t\thash: %d\n", state->next_states[j]);
+            printf("\t\tprob: %f\n", state->probs[j]);
+            printf("\t\treward: %f\n", state->rewards[j]);
+        }
+    }
 }
