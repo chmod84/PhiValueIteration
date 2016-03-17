@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
+CC=icc
 CCC=g++
 CXX=g++
 FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=ICC-Linux-x86
 CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -35,11 +35,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/communication_module.o \
 	${OBJECTDIR}/echo.o
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-mmic
 
 # CC Compiler Flags
 CCFLAGS=
@@ -62,7 +63,12 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/echo: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/echo ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/echo.o: echo.c 
+${OBJECTDIR}/communication_module.o: nbproject/Makefile-${CND_CONF}.mk communication_module.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/communication_module.o communication_module.c
+
+${OBJECTDIR}/echo.o: nbproject/Makefile-${CND_CONF}.mk echo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/echo.o echo.c
