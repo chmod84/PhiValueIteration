@@ -43,12 +43,15 @@ struct hostent {
  * error - wrapper for perror
  */
 
+struct state* states = NULL;
+
 int main(int argc, char **argv) {
     receive_from_controller();
-//    fprintf(stderr,"here1\n");
-//    print_states(states);
-//    run_vi(states, 10, 0.001);
-//    print_states(states);
+    printf("------ Received States: --------\n");
+    print_states();
+    run_vi(10, 0.001);
+    printf("------ After VI: --------\n");
+    print_states(states);
 //    fprintf(stderr,"here2\n");
     
 }

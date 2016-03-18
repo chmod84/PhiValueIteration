@@ -27,10 +27,8 @@ struct state {
     UT_hash_handle hh;
 };
 
-static struct state* states = NULL;
 
-
-
+extern struct state* states;
 #ifdef	__cplusplus
 extern "C" {
 #endif

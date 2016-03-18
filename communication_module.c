@@ -9,33 +9,14 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 #include "state.h"
+#include "utils.h"
 
 void error(char *msg) {
     perror(msg);
     //    exit(1);
 }
 
-void print_states(struct state* states) {
-    struct state* state;
-    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
-        printf("State %d: size of the actions: %d\n", state->hashcode, state->action_size);
-        printf("\tisTerminal:%d\n", state->terminal);
-        printf("\tv: %f\n", state->v);
-        int j;
-        for (j = 0; j < state->action_size; j++) {
-            struct action* action = state->actions + j;
-            printf("\tAction %d\n", action->hashcode);
-            int k;
-            printf("\tNext state size: %d\n", action->next_states_size);
-            for (k = 0; k < action->next_states_size; k++) {
-                printf("\t\tnext state hash: %d\n", action->next_states[k]);
-                printf("\t\tprob: %f\n", action->probs[k]);
-                printf("\t\treward: %f\n", action->rewards[k]);
-            }
 
-        }
-    }
-}
 
 int receive_from_controller() {
     int listenfd; /* listening socket */
@@ -132,12 +113,12 @@ int receive_from_controller() {
                 action->rewards = action->probs + action->next_states_size;
                 n = read(connfd, action->next_states, action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2);
                 n = read(connfd, &action->hashcode, sizeof (int));
-                int k;
-                for (k = 0; k < action->next_states_size; k++) {
-                    printf("next state %d: %d\n", k, action->next_states[k]);
-                    printf("reward: %f\n", action->rewards[k]);
-                    printf("probability: %f\n", action->probs[k]);
-                }
+//                int k;
+//                for (k = 0; k < action->next_states_size; k++) {
+//                    printf("next state %d: %d\n", k, action->next_states[k]);
+//                    printf("reward: %f\n", action->rewards[k]);
+//                    printf("probability: %f\n", action->probs[k]);
+//                }
             }
         }
         state->v = 0;

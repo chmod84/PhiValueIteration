@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=ICC-Linux-x86
+CND_PLATFORM=GNU-Linux-x86
 CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/uthash/ringbuf.o \
 	${OBJECTDIR}/uthash/utmm.o \
 	${OBJECTDIR}/uthash/utvector.o \
+	${OBJECTDIR}/utils.o \
 	${OBJECTDIR}/vi_module.o
 
 
@@ -97,6 +98,11 @@ ${OBJECTDIR}/uthash/utvector.o: nbproject/Makefile-${CND_CONF}.mk uthash/utvecto
 	${MKDIR} -p ${OBJECTDIR}/uthash
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/utvector.o uthash/utvector.c
+
+${OBJECTDIR}/utils.o: nbproject/Makefile-${CND_CONF}.mk utils.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils.o utils.c
 
 ${OBJECTDIR}/vi_module.o: nbproject/Makefile-${CND_CONF}.mk vi_module.c 
 	${MKDIR} -p ${OBJECTDIR}
