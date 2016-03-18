@@ -15,21 +15,22 @@ void error(char *msg) {
     //    exit(1);
 }
 
-
 void print_states(struct state* states) {
     struct state* state;
     for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
         printf("State %d: size of the actions: %d\n", state->hashcode, state->action_size);
         printf("\tisTerminal:%d\n", state->terminal);
+        printf("\tv: %f\n", state->v);
         int j;
         for (j = 0; j < state->action_size; j++) {
-            struct action action = state->actions[j];
-            printf("\tAction %d\n", action.hashcode);
+            struct action* action = state->actions + j;
+            printf("\tAction %d\n", action->hashcode);
             int k;
-            for (k = 0; k < action.next_states_size; k++) {
-                printf("\t\tnext state hash: %d\n", action.next_states[k]);
-                printf("\t\tprob: %f\n", action.probs[k]);
-                printf("\t\treward: %f\n", action.rewards[k]);
+            printf("\tNext state size: %d\n", action->next_states_size);
+            for (k = 0; k < action->next_states_size; k++) {
+                printf("\t\tnext state hash: %d\n", action->next_states[k]);
+                printf("\t\tprob: %f\n", action->probs[k]);
+                printf("\t\treward: %f\n", action->rewards[k]);
             }
 
         }
@@ -115,35 +116,34 @@ int receive_from_controller() {
     for (i = 0; i < state_space_size; i++) {
         struct state* state = malloc(sizeof (struct state));
         //Using the hashcode as base pointer for a triple read
-        n = read(connfd, &(state->hashcode), 3* sizeof (int));
+        n = read(connfd, &(state->hashcode), 3 * sizeof (int));
         int action_size = state->action_size;
-//        printf("Actions size: %d\n", action_size);
+        //        printf("Actions size: %d\n", action_size);
         if (action_size > 0) {
             state->actions = malloc(action_size * sizeof (struct action));
             int j;
             for (j = 0; j < action_size; j++) {
-                struct action action = state->actions[j];
-                n = read(connfd, &(action.next_states_size), sizeof (int));
-//                printf("Next states size: %d\n", action.next_states_size);
+                struct action* action = state->actions + j;
+                n = read(connfd, &(action->next_states_size), sizeof (int));
+                //                printf("Next states size: %d\n", action.next_states_size);
                 //Trying to minimize the number of read
-                action.next_states = malloc(action.next_states_size * sizeof(int) + action.next_states_size*sizeof(double)*2);
-//                action.next_states = malloc(action.next_states_size * sizeof (int));
-                action.probs = (double*) action.next_states+action.next_states_size;
-                action.rewards = action.probs+action.next_states_size;
-                n = read(connfd, action.next_states, action.next_states_size * sizeof(int) + action.next_states_size*sizeof(double)*2);
-                n = read(connfd, &action.hashcode, sizeof (int));
+                action->next_states = malloc(action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2);
+                action->probs = (double*) (action->next_states + action->next_states_size);
+                action->rewards = action->probs + action->next_states_size;
+                n = read(connfd, action->next_states, action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2);
+                n = read(connfd, &action->hashcode, sizeof (int));
                 int k;
-                for (k=0;k<action.next_states_size;k++) {
-//                    printf("next state %d: %d\n", k, action.next_states[k]);
-//                    printf("reward: %f\n", action.rewards[k]);
-//                    printf("probability: %f\n", action.probs[k]);
+                for (k = 0; k < action->next_states_size; k++) {
+                    printf("next state %d: %d\n", k, action->next_states[k]);
+                    printf("reward: %f\n", action->rewards[k]);
+                    printf("probability: %f\n", action->probs[k]);
                 }
             }
         }
         state->v = 0;
         HASH_ADD_INT(states, hashcode, state);
     }
-
+    printf("Received %d states\n", i);
     gettimeofday(&tv2, NULL);
 
     time_t seconds = tv2.tv_sec - tv1.tv_sec;

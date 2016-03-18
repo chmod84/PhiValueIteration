@@ -33,7 +33,7 @@ double perform_bellman_update(struct state* current_state) {
     return max_q;
 }
 
-int run_vi(struct state* states, int state_space_size, int iterations, double max_delta) {
+int run_vi(struct state* states, int iterations, double max_delta) {
     double delta = 0;
     struct state* current_state;
 

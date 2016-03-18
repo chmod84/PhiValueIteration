@@ -45,4 +45,10 @@ struct hostent {
 
 int main(int argc, char **argv) {
     receive_from_controller();
+//    fprintf(stderr,"here1\n");
+//    print_states(states);
+//    run_vi(states, 10, 0.001);
+//    print_states(states);
+//    fprintf(stderr,"here2\n");
+    
 }
