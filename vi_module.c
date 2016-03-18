@@ -17,9 +17,9 @@ double compute_q(struct state* current_state, int action_index) {
             fprintf(stderr, "Critical: next state %d not found!\n", action.next_states[i]);
             exit(-1);
         }
-        
+
         q += action.probs[i]*(action.probs[i] + GAMMA * next_state->v);
-//        printf("q=%f\n",q);
+        //        printf("q=%f\n",q);
     }
     return q;
 }
@@ -42,26 +42,27 @@ double perform_bellman_update(struct state* current_state) {
 }
 
 int run_vi(int iterations, double max_delta) {
-    double delta = 0;
     struct state* current_state;
 
     int i;
     for (i = 0; i < iterations; i++) {
-//        printf("----- Iteration %d -----\n", i);
+        double delta = 0;
+
+        //        printf("----- Iteration %d -----\n", i);
         for (current_state = states; current_state != NULL; current_state = (struct state*) (current_state->hh.next)) {
             double v = current_state->v;
             double max_q = perform_bellman_update(current_state);
             double diff = fabs(max_q - v);
-//            printf("max_q=%f, current_state->v=%f, fabs()=%f\n",max_q,current_state->v, diff);
+            //            printf("max_q=%f, current_state->v=%f, fabs()=%f\n",max_q,current_state->v, diff);
             if (diff > delta)
                 delta = diff;
-//            printf("max_q=%f\ndiff=%f\ndelta=%f\n", max_q, diff, delta);
+            //            printf("max_q=%f\ndiff=%f\ndelta=%f\n", max_q, diff, delta);
         }
 
-        printf("Iteration %d, delta=%f\n",i,delta);
+        printf("Iteration %d, delta=%f\n", i, delta);
 
         if (delta < max_delta)
             break;
     }
-    printf("Performed %d iterations, delta=%f\n", i, delta);
+    printf("Performed %d iterations\n", i);
 }
