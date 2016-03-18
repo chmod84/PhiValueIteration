@@ -14,7 +14,7 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=icc
+CC=gcc
 CCC=g++
 CXX=g++
 FC=gfortran
@@ -46,7 +46,7 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=-mmic
+CFLAGS=
 
 # CC Compiler Flags
 CCFLAGS=

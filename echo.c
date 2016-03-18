@@ -48,10 +48,10 @@ struct state* states = NULL;
 int main(int argc, char **argv) {
     receive_from_controller();
     printf("------ Received States: --------\n");
-    print_states();
-    run_vi(10, 0.001);
-    printf("------ After VI: --------\n");
-    print_states(states);
+//    print_states();
+    run_vi(100, 0.001);
+//    printf("------ After VI: --------\n");
+//    print_states(states);
 //    fprintf(stderr,"here2\n");
     
 }

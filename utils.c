@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <stdio.h>
 
 void print_states() {
     struct state* state;

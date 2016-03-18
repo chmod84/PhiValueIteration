@@ -16,8 +16,6 @@ void error(char *msg) {
     //    exit(1);
 }
 
-
-
 int receive_from_controller() {
     int listenfd; /* listening socket */
     int connfd; /* connection socket */
@@ -88,8 +86,8 @@ int receive_from_controller() {
 
     int state_space_size;
     n = read(connfd, &state_space_size, sizeof (int));
-    if (n <= 0) {
-        error("ERROR in retrieving the state space size. Exiting\0");
+    if (n != sizeof (int)) {
+        error("ERROR in retrieving the state space size. Exiting\n");
         exit(-1);
     }
     printf("state space size: %d\n", state_space_size);
@@ -98,27 +96,57 @@ int receive_from_controller() {
         struct state* state = malloc(sizeof (struct state));
         //Using the hashcode as base pointer for a triple read
         n = read(connfd, &(state->hashcode), 3 * sizeof (int));
+        if (n != 3 * sizeof (int)) {
+            error("Unable to read hashcode, terminal and actionsize attributes. Exiting\n");
+            exit(-1);
+        }
         int action_size = state->action_size;
-        //        printf("Actions size: %d\n", action_size);
+        printf("Actions size: %d\n", action_size);
         if (action_size > 0) {
             state->actions = malloc(action_size * sizeof (struct action));
             int j;
             for (j = 0; j < action_size; j++) {
                 struct action* action = state->actions + j;
                 n = read(connfd, &(action->next_states_size), sizeof (int));
-                //                printf("Next states size: %d\n", action.next_states_size);
+                if (n!=sizeof(int)) {
+                    error("Unable to read the size of the next states. Exiting\n");
+                    exit(-1);
+                }
+                printf("Next states size: %d\n", action->next_states_size);
+
+                action->next_states = malloc(action->next_states_size * sizeof (int));
+                //                action->probs= malloc(action->next_states_size* sizeof(double));
+                //                action->rewards= malloc(action->next_states_size* sizeof(double));
+                //                n = read(connfd, action->next_states, action->next_states_size * sizeof (int));
+                //                n = read(connfd, action->probs, action->next_states_size * sizeof (double));
+                //                n = read(connfd, action->rewards, action->next_states_size*sizeof(double));
+
                 //Trying to minimize the number of read
-                action->next_states = malloc(action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2);
+                int to_read = action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2;
+                action->next_states = malloc(to_read);
                 action->probs = (double*) (action->next_states + action->next_states_size);
                 action->rewards = action->probs + action->next_states_size;
-                n = read(connfd, action->next_states, action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2);
+                n = 0;
+                do {
+                    fprintf(stderr, "n=%d\n", n);
+                    int partial_read = read(connfd, (char*) action->next_states + n, to_read - n);
+                    n += partial_read;
+                } while (n < to_read);
+                if (n != to_read) {
+                    fprintf(stderr, "Critical!! Expected %d, read %d\n", to_read, n);
+                    exit(-1);
+                }
                 n = read(connfd, &action->hashcode, sizeof (int));
-//                int k;
-//                for (k = 0; k < action->next_states_size; k++) {
-//                    printf("next state %d: %d\n", k, action->next_states[k]);
-//                    printf("reward: %f\n", action->rewards[k]);
-//                    printf("probability: %f\n", action->probs[k]);
-//                }
+                if (n!=sizeof(int)) {
+                    error("Unable to read the action hashcode. Exiting\n");
+                    exit(-1);
+                }
+                int k;
+                for (k = 0; k < action->next_states_size; k++) {
+                    printf("next state %d: %d\n", k, action->next_states[k]);
+                    printf("reward: %f\n", action->rewards[k]);
+                    printf("probability: %f\n", action->probs[k]);
+                }
             }
         }
         state->v = 0;
@@ -132,6 +160,6 @@ int receive_from_controller() {
     fprintf(stderr, "Transfer time: %u seconds %u milliseconds\n", seconds, useconds / 1000);
 
     close(connfd);
-//    print_states(states);
+    //    print_states(states);
 }
 

@@ -59,8 +59,7 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <commandlineTool>icc</commandlineTool>
-          <commandLine>-mmic</commandLine>
+          <commandlineTool>gcc</commandlineTool>
         </cTool>
       </compileType>
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
