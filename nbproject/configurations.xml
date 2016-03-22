@@ -60,8 +60,7 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <commandlineTool>icc</commandlineTool>
-          <commandLine>-mmic</commandLine>
+          <commandlineTool>gcc</commandlineTool>
         </cTool>
         <linkerTool>
           <commandlineTool>gcc</commandlineTool>

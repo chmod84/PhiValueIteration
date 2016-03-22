@@ -6,6 +6,7 @@
 #define GAMMA 0.9
 
 struct state*** divided_states;
+int* divided_states_size;
 double* deltas;
 
 double parallel_compute_q(struct state* current_state, int action_index) {
@@ -47,15 +48,17 @@ double parallel_perform_bellman_update(struct state* current_state) {
 
 void* run_vi_worker(void* arg) {
     int my_index = (int) arg;
-//    fprintf(stderr, "Worker %d\n", my_index);
+    //    fprintf(stderr, "Worker %d\n", my_index);
     struct state** my_states = divided_states[my_index];
     int i = 0;
     double delta = 0;
-    while (my_states[i] != NULL) {
+    while (i < divided_states_size[my_index]) {
+//        fprintf(stderr, "i=%d\n", i);
         double v = my_states[i] ->v;
-//        fprintf(stderr, "Current state: %d, value: %f\n", i, v);
+//        fprintf(stderr, "v=%f\n", v);
+        //        fprintf(stderr, "Current state: %d, value: %f\n", i, v);
         double max_q = parallel_perform_bellman_update(my_states[i]);
-//        fprintf(stderr,"max_q=%f\n", max_q);
+        //        fprintf(stderr,"max_q=%f\n", max_q);
         my_states[i] ->v = max_q;
         double diff = fabs(max_q - v);
         if (diff > delta)
@@ -71,18 +74,20 @@ int run_vi_parallel(int iterations, double max_delta, int n_thread) {
     int states_per_thread = ceil((double) state_space_size / n_thread);
     printf("states_per_thread=%d", states_per_thread);
     divided_states = malloc(sizeof (struct state**) * n_thread);
-    int i;
+    divided_states_size = malloc(sizeof (int)*n_thread);
+    int i, j;
+
     for (i = 0; i < n_thread; i++) {
         divided_states[i] = malloc(sizeof (struct state*) * states_per_thread);
         memset(divided_states[i], 0, sizeof (struct state*) * states_per_thread);
     }
     struct state* current_state = states;
-    int j;
-    for (i = 0; i < n_thread && current_state != NULL; i++) {
+    for (i = 0; i < n_thread; i++) {
         for (j = 0; j < states_per_thread && current_state != NULL; j++) {
             divided_states[i][j] = current_state;
             current_state = (struct state*) (current_state->hh.next);
         }
+        divided_states_size[i] = j;
     }
     //Allocating memory for deltas (1 per thread)
     deltas = malloc(sizeof (double)*n_thread);

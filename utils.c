@@ -21,3 +21,10 @@ void print_states() {
         }
     }
 }
+
+void print_v() {
+    struct state* state;
+    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
+        printf("\tv: %f\n", state->v);
+    }
+}

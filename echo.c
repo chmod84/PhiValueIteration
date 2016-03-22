@@ -52,7 +52,6 @@ int state_space_size = 0;
 
 int main(int argc, char **argv) {
     receive_from_controller();
-    printf("------ Received States: --------\n");
 //        print_states();
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
@@ -63,7 +62,10 @@ int main(int argc, char **argv) {
     time_t seconds = tv2.tv_sec - tv1.tv_sec;
     useconds_t useconds = tv2.tv_usec - tv1.tv_usec;
     fprintf(stderr, "VI time: %u seconds %u microseconds\n", seconds, useconds);
-        printf("------ After VI: --------\n");
+    
+//    print_v();
+    
+//        printf("------ After VI: --------\n");
 //        print_states(states);
     //    fprintf(stderr,"here2\n");
 
