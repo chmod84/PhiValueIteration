@@ -14,7 +14,7 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
+CC=icc
 CCC=g++
 CXX=g++
 FC=gfortran
@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/communication_module.o \
 	${OBJECTDIR}/echo.o \
+	${OBJECTDIR}/parallel_vi_module.o \
 	${OBJECTDIR}/uthash/libut.o \
 	${OBJECTDIR}/uthash/ringbuf.o \
 	${OBJECTDIR}/uthash/utmm.o \
@@ -46,7 +47,7 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-mmic
 
 # CC Compiler Flags
 CCFLAGS=
@@ -67,7 +68,7 @@ LDLIBSOPTIONS=
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/echo: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/echo ${OBJECTFILES} ${LDLIBSOPTIONS}
+	gcc -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/echo ${OBJECTFILES} ${LDLIBSOPTIONS} -lpthread -lm
 
 ${OBJECTDIR}/communication_module.o: nbproject/Makefile-${CND_CONF}.mk communication_module.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -78,6 +79,11 @@ ${OBJECTDIR}/echo.o: nbproject/Makefile-${CND_CONF}.mk echo.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/echo.o echo.c
+
+${OBJECTDIR}/parallel_vi_module.o: nbproject/Makefile-${CND_CONF}.mk parallel_vi_module.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/parallel_vi_module.o parallel_vi_module.c
 
 ${OBJECTDIR}/uthash/libut.o: nbproject/Makefile-${CND_CONF}.mk uthash/libut.c 
 	${MKDIR} -p ${OBJECTDIR}/uthash

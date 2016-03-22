@@ -37,11 +37,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/communication_module.o \
 	${OBJECTDIR}/echo.o \
-	${OBJECTDIR}/uthash/global.o \
+	${OBJECTDIR}/parallel_vi_module.o \
 	${OBJECTDIR}/uthash/libut.o \
 	${OBJECTDIR}/uthash/ringbuf.o \
 	${OBJECTDIR}/uthash/utmm.o \
 	${OBJECTDIR}/uthash/utvector.o \
+	${OBJECTDIR}/utils.o \
 	${OBJECTDIR}/vi_module.o
 
 
@@ -79,10 +80,10 @@ ${OBJECTDIR}/echo.o: echo.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/echo.o echo.c
 
-${OBJECTDIR}/uthash/global.o: uthash/global.c 
-	${MKDIR} -p ${OBJECTDIR}/uthash
+${OBJECTDIR}/parallel_vi_module.o: parallel_vi_module.c 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/global.o uthash/global.c
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/parallel_vi_module.o parallel_vi_module.c
 
 ${OBJECTDIR}/uthash/libut.o: uthash/libut.c 
 	${MKDIR} -p ${OBJECTDIR}/uthash
@@ -103,6 +104,11 @@ ${OBJECTDIR}/uthash/utvector.o: uthash/utvector.c
 	${MKDIR} -p ${OBJECTDIR}/uthash
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/uthash/utvector.o uthash/utvector.c
+
+${OBJECTDIR}/utils.o: utils.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/utils.o utils.c
 
 ${OBJECTDIR}/vi_module.o: vi_module.c 
 	${MKDIR} -p ${OBJECTDIR}

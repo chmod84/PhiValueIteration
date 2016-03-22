@@ -10,6 +10,7 @@
 
 #include "state.h"
 void print_state(struct state*);
+extern int state_space_size;
 
 #ifdef	__cplusplus
 extern "C" {

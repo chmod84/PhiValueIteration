@@ -1,7 +1,9 @@
 
 #include <math.h>
 #include "state.h"
+#include "utils.h"
 #include <stdio.h>
+#include <pthread.h>
 #define GAMMA 0.9
 
 double compute_q(struct state* current_state, int action_index) {

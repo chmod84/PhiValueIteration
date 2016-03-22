@@ -31,6 +31,7 @@
       </logicalFolder>
       <itemPath>communication_module.c</itemPath>
       <itemPath>echo.c</itemPath>
+      <itemPath>parallel_vi_module.c</itemPath>
       <itemPath>utils.c</itemPath>
       <itemPath>vi_module.c</itemPath>
     </logicalFolder>
@@ -59,12 +60,19 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <commandlineTool>gcc</commandlineTool>
+          <commandlineTool>icc</commandlineTool>
+          <commandLine>-mmic</commandLine>
         </cTool>
+        <linkerTool>
+          <commandlineTool>gcc</commandlineTool>
+          <commandLine>-lpthread -lm</commandLine>
+        </linkerTool>
       </compileType>
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="parallel_vi_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="state.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -124,6 +132,8 @@
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="parallel_vi_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="state.h" ex="false" tool="3" flavor2="0">
       </item>
