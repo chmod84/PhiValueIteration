@@ -61,8 +61,8 @@ int main(int argc, char **argv) {
     gettimeofday(&tv1, NULL);
     //    run_vi(100, 0.001);
     thread_n = atoi(argv[1]);
-    run_vi_parallel();
-//    run_vi_parallel_wrapped();
+//    run_vi_parallel();
+    run_vi_parallel_wrapped();
 
     gettimeofday(&tv2, NULL);
     time_t seconds = tv2.tv_sec - tv1.tv_sec;

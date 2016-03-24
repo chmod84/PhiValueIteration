@@ -68,6 +68,11 @@
           <commandLine>-lpthread -lm</commandLine>
         </linkerTool>
       </compileType>
+      <item path="/dasi/users/stefano/state_dumps/12279.dump"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
@@ -129,6 +134,11 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="/dasi/users/stefano/state_dumps/12279.dump"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="communication_module.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="echo.c" ex="false" tool="0" flavor2="0">
