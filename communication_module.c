@@ -10,6 +10,7 @@
 #include <sys/time.h>
 #include "state.h"
 #include "utils.h"
+#include <malloc.h>
 
 void error(char *msg) {
     perror(msg);
@@ -28,7 +29,7 @@ int receive_from_controller() {
     int optval; /* flag value for setsockopt */
     int n; /* message byte size */
 
-    portno = 4001;
+    portno = 8000;
 
     /* socket: create a socket */
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -114,16 +115,17 @@ int receive_from_controller() {
 //                printf("Next states size: %d\n", action->next_states_size);
 
                 action->next_states = malloc(action->next_states_size * sizeof (int));
-                                action->probs= malloc(action->next_states_size* sizeof(double));
-                                action->rewards= malloc(action->next_states_size* sizeof(double));
-                                n = read(connfd, action->next_states, action->next_states_size * sizeof (int));
-                                n = read(connfd, action->probs, action->next_states_size * sizeof (double));
-                                n = read(connfd, action->rewards, action->next_states_size*sizeof(double));
+                action->probs = _mm_malloc(action->next_states_size * sizeof (double), 64);
+                action->rewards = malloc(action->next_states_size * sizeof (double));
+                n = read(connfd, action->next_states, action->next_states_size * sizeof (int));
+                n = read(connfd, action->probs, action->next_states_size * sizeof (double));
+                n = read(connfd, action->rewards, action->next_states_size * sizeof (double));
 
-                //Trying to minimize the number of read
+//                Trying to minimize the number of read
 //                int to_read = action->next_states_size * sizeof (int) +action->next_states_size * sizeof (double)*2;
 //                action->next_states = malloc(to_read);
-//                action->probs = (double*) (action->next_states + action->next_states_size);
+//                memset(action->next_states,0,to_read);
+//                action->probs = (double*) action->next_states + action->next_states_size;
 //                action->rewards = action->probs + action->next_states_size;
 //                n = 0;
 //                do {
@@ -136,6 +138,7 @@ int receive_from_controller() {
 //                }
                 n = read(connfd, &action->hashcode, sizeof (int));
                 if (n!=sizeof(int)) {
+                    fprintf(stderr,"Expected %d bytes, received %d bytes\n", sizeof(int), n);
                     error("Unable to read the action hashcode. Exiting\n");
                     exit(-1);
                 }

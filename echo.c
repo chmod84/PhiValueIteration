@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include "state.h"
+#include "utils.h"
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -49,24 +50,29 @@ struct hostent {
 
 struct state* states = NULL;
 int state_space_size = 0;
+int thread_n = 0;
+int iterations_n = 100;
+double max_delta = 0.001;
 
 int main(int argc, char **argv) {
     receive_from_controller();
-//        print_states();
+    //        print_states();
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
-//    run_vi(100, 0.001);
-    int n_thread = atoi(argv[1]);
-    run_vi_parallel(100, 0.001, n_thread);
+    //    run_vi(100, 0.001);
+    thread_n = atoi(argv[1]);
+    run_vi_parallel();
+//    run_vi_parallel_wrapped();
+
     gettimeofday(&tv2, NULL);
     time_t seconds = tv2.tv_sec - tv1.tv_sec;
     useconds_t useconds = tv2.tv_usec - tv1.tv_usec;
     fprintf(stderr, "VI time: %u seconds %u microseconds\n", seconds, useconds);
-    
-//    print_v();
-    
-//        printf("------ After VI: --------\n");
-//        print_states(states);
+
+    //    print_v();
+
+    //        printf("------ After VI: --------\n");
+    //        print_states(states);
     //    fprintf(stderr,"here2\n");
 
 }

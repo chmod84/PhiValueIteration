@@ -6,6 +6,7 @@
  */
 
 #include "uthash/uthash.h"
+#include <malloc.h>
 
 #ifndef STATE_H
 #define	STATE_H
@@ -14,7 +15,7 @@ struct action {
     int hashcode;
     int next_states_size;
     int* next_states;
-    double* probs;
+    double* probs __attribute__((aligned(64)));
     double* rewards;
 };
 

@@ -12,6 +12,9 @@
 void print_state(struct state*);
 void print_v();
 extern int state_space_size;
+extern int thread_n;
+extern int iterations_n;
+extern double max_delta;
 
 #ifdef	__cplusplus
 extern "C" {
