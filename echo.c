@@ -58,16 +58,19 @@ int main(int argc, char **argv) {
     receive_from_controller();
     //        print_states();
     struct timeval tv1, tv2;
-    gettimeofday(&tv1, NULL);
-    //    run_vi(100, 0.001);
-    thread_n = atoi(argv[1]);
-//    run_vi_parallel();
-    run_vi_parallel_wrapped();
 
-    gettimeofday(&tv2, NULL);
-    time_t seconds = tv2.tv_sec - tv1.tv_sec;
-    useconds_t useconds = tv2.tv_usec - tv1.tv_usec;
-    fprintf(stderr, "VI time: %u seconds %u microseconds\n", seconds, useconds);
+    //    run_vi(100, 0.001);
+//    thread_n = atoi(argv[1]);
+    //    run_vi_parallel();
+    for (thread_n = 10; thread_n <= 240; thread_n = thread_n + 10) {
+        gettimeofday(&tv1, NULL);
+        run_vi_parallel_wrapped();
+        gettimeofday(&tv2, NULL);
+        time_t seconds = tv2.tv_sec - tv1.tv_sec;
+        useconds_t useconds = tv2.tv_usec - tv1.tv_usec;
+        fprintf(stderr, "VI time: %u seconds %u microseconds\n", seconds, useconds);
+        reset_v();
+    }
 
     //    print_v();
 

@@ -28,3 +28,10 @@ void print_v() {
         printf("\tv: %f\n", state->v);
     }
 }
+
+void reset_v() {
+    struct state* state;
+    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
+        state->v = 0;
+    }
+}

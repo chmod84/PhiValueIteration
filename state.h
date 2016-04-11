@@ -15,7 +15,7 @@ struct action {
     int hashcode;
     int next_states_size;
     int* next_states;
-    double* probs __attribute__((aligned(64)));
+    double* probs;// __attribute__((aligned(64)));
     double* rewards;
 };
 

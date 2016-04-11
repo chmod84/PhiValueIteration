@@ -15,6 +15,8 @@ pthread_barrier_t barrier_after;
 
 unsigned int *hash_time;
 
+int completed = 0;
+
 void scatter_affinity(int thread_id) {
     int scatter_phy_cores = 61;
     int log_cores_per_phys_core = 4;
@@ -41,6 +43,7 @@ void scatter_affinity(int thread_id) {
 }
 
 double parallel_compute_q(struct state* current_state, int action_index, int my_index) {
+    //    printf("inside compute_q\n");
     double q = 0;
     struct action action = current_state->actions[action_index];
     int next_state_size = action.next_states_size;
@@ -50,10 +53,10 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
     struct state * next_state[next_state_size];
     for (i = 0; i < next_state_size; i++) {
         struct timeval t1, t2;
-//        gettimeofday(&t1, NULL);
+        //        gettimeofday(&t1, NULL);
         HASH_FIND_INT(states, &action.next_states[i], next_state[i]);
-//        gettimeofday(&t2, NULL);
-//        hash_time[my_index] += ((t2.tv_sec - t1.tv_sec)*1000*1000)+(t2.tv_usec - t1.tv_usec);
+        //        gettimeofday(&t2, NULL);
+        //        hash_time[my_index] += ((t2.tv_sec - t1.tv_sec)*1000*1000)+(t2.tv_usec - t1.tv_usec);
     }
     for (i = 0; i < next_state_size; i++) {
         __assume_aligned(action.probs, 64);
@@ -67,6 +70,7 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
 }
 
 double parallel_perform_bellman_update(struct state* current_state, int my_index) {
+    //    printf("inside perform_bellman_update\n");
     if (current_state->terminal) {
         current_state->v = 0;
         return 0;
@@ -82,11 +86,12 @@ double parallel_perform_bellman_update(struct state* current_state, int my_index
         if (q[i] > max_q)
             max_q = q[i];
     }
-    current_state->v = max_q;
+//    current_state->v = max_q;
     return max_q;
 }
 
 void* run_vi_worker(void* arg) {
+    //    printf("inside run_vi_worker\n");
     int my_index = (int) arg;
     //    fprintf(stderr, "Worker %d\n", my_index);
     struct state** my_states = divided_states[my_index];
@@ -168,6 +173,7 @@ void* run_vi_worker(void* arg) {
 //}
 
 void* run_vi_worker_wrapper(void* arg) {
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     int thread_index = (int) arg;
     //    scatter_affinity(thread_index);
     int i, j;
@@ -175,6 +181,7 @@ void* run_vi_worker_wrapper(void* arg) {
         run_vi_worker(arg);
         pthread_barrier_wait(&barrier_before);
         pthread_barrier_wait(&barrier_after);
+        if (completed) pthread_exit(NULL);
     }
 
 }
@@ -215,8 +222,8 @@ int run_vi_parallel_wrapped() {
     pthread_barrier_init(&barrier_after, NULL, thread_n + 1);
 
     hash_time = malloc(sizeof (unsigned int) * thread_n);
-    for (i=0;i<thread_n;i++) {
-        hash_time[i]=0;
+    for (i = 0; i < thread_n; i++) {
+        hash_time[i] = 0;
     }
 
     for (i = 0; i < thread_n; i++) {
@@ -236,15 +243,26 @@ int run_vi_parallel_wrapped() {
         }
         //        printf("min_delta=%f\n",min_delta);
         if (min_delta < max_delta) {
-            for (j = 0; j < thread_n; j++) {
-                pthread_cancel(threads[j]);
-            }
-            break;
+            completed = 1;
+            //            for (j = 0; j < thread_n; j++) {
+            //                pthread_cancel(threads[j]);
+            //            }
         }
-        printf("Iteration %d, delta=%f\n", i, min_delta);
-
         pthread_barrier_wait(&barrier_after);
+        printf("Iteration %d, delta=%f\n", i, min_delta);
+        if (completed) break;
     }
-    printf("Iteration %d, delta=%f\n", i, min_delta);
-//    printf("Thread %d: %f sec in hashtable query\n", i, (hash_time[i]/(double)1000)/(double)1000);
+    //    printf("Iteration %d, delta=%f\n", i, min_delta);
+    //    printf("Thread %d: %f sec in hashtable query\n", i, (hash_time[i]/(double)1000)/(double)1000);
+
+    for (i = 0; i < thread_n; i++) {
+        free(divided_states[i]);
+    }
+    free(deltas);
+    free(hash_time);
+    free(divided_states_size);
+    free(divided_states);
+    pthread_barrier_destroy(&barrier_before);
+    pthread_barrier_destroy(&barrier_after);
+    completed = 0;
 }

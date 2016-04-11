@@ -93,6 +93,9 @@ int receive_from_controller() {
     printf("state space size: %d\n", state_space_size);
     int i;
     for (i = 0; i < state_space_size; i++) {
+        if (i%100000==0) {
+            printf("Processed %d states\n", i);
+        }
         struct state* state = malloc(sizeof (struct state));
         //Using the hashcode as base pointer for a triple read
         n = read(connfd, &(state->hashcode), 3 * sizeof (int));
