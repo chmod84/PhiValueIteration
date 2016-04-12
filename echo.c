@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     //    run_vi(100, 0.001);
     //    thread_n = atoi(argv[1]);
     //    run_vi_parallel();
-    for (thread_n = 1; thread_n <= 20; thread_n = thread_n + 1) {
+    for (thread_n = 10; thread_n <= 240; thread_n = thread_n + 10) {
         struct timeval tv_average;
         int iterations;
         for (iterations = 0; iterations < 100; iterations++) {
