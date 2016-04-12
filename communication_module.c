@@ -10,7 +10,6 @@
 #include <sys/time.h>
 #include "state.h"
 #include "utils.h"
-#include <malloc.h>
 
 void error(char *msg) {
     perror(msg);
@@ -118,7 +117,7 @@ int receive_from_controller() {
 //                printf("Next states size: %d\n", action->next_states_size);
 
                 action->next_states = malloc(action->next_states_size * sizeof (int));
-                action->probs = malloc(action->next_states_size * sizeof (double));
+                action->probs = (action->next_states_size * sizeof (double));
                 action->rewards = malloc(action->next_states_size * sizeof (double));
                 n = read(connfd, action->next_states, action->next_states_size * sizeof (int));
                 n = read(connfd, action->probs, action->next_states_size * sizeof (double));
