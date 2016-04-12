@@ -59,7 +59,6 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
         //        hash_time[my_index] += ((t2.tv_sec - t1.tv_sec)*1000*1000)+(t2.tv_usec - t1.tv_usec);
     }
     for (i = 0; i < next_state_size; i++) {
-        __assume_aligned(action.probs, 64);
         qs[i] = action.probs[i]*(action.probs[i] + GAMMA * next_state[i]->v);
     }
 
