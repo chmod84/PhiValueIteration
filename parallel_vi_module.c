@@ -173,12 +173,12 @@ void* run_vi_worker(void* arg) {
 //}
 
 void* run_vi_worker_wrapper(void* arg) {
-    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+//    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     int thread_index = (int) arg;
     //    scatter_affinity(thread_index);
     int i, j;
     for (i = 0; i < iterations_n; i++) {
-        run_vi_worker(arg);
+        run_vi_worker(thread_index);
         pthread_barrier_wait(&barrier_before);
         pthread_barrier_wait(&barrier_after);
         if (completed) pthread_exit(NULL);
@@ -200,10 +200,13 @@ int run_vi_parallel_wrapped() {
         memset(divided_states[i], 0, sizeof (struct state*) * states_per_thread);
     }
     struct state* current_state = states;
+    int processed_states=0;
     for (i = 0; i < thread_n; i++) {
-        for (j = 0; j < states_per_thread && current_state != NULL; j++) {
+//        for (j = 0; j < states_per_thread && current_state != NULL; j++) {
+        for (j = 0; j < states_per_thread && processed_states<state_space_size; j++) {
             divided_states[i][j] = current_state;
             current_state = (struct state*) (current_state->hh.next);
+            processed_states++;
         }
         divided_states_size[i] = j;
     }
@@ -256,6 +259,7 @@ int run_vi_parallel_wrapped() {
     //    printf("Thread %d: %f sec in hashtable query\n", i, (hash_time[i]/(double)1000)/(double)1000);
 
     for (i = 0; i < thread_n; i++) {
+        pthread_join(threads[i], NULL);
         free(divided_states[i]);
     }
     free(deltas);
