@@ -11,6 +11,7 @@
 #include "state.h"
 void print_state(struct state*);
 void print_v();
+int timeval_subtract(struct timeval*, struct timeval*, struct timeval*);
 extern int state_space_size;
 extern int thread_n;
 extern int iterations_n;

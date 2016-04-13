@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/communication_module.o \
 	${OBJECTDIR}/echo.o \
+	${OBJECTDIR}/input_file_module.o \
 	${OBJECTDIR}/parallel_vi_module.o \
 	${OBJECTDIR}/uthash/libut.o \
 	${OBJECTDIR}/uthash/ringbuf.o \
@@ -79,6 +80,11 @@ ${OBJECTDIR}/echo.o: echo.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/echo.o echo.c
+
+${OBJECTDIR}/input_file_module.o: input_file_module.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/input_file_module.o input_file_module.c
 
 ${OBJECTDIR}/parallel_vi_module.o: parallel_vi_module.c 
 	${MKDIR} -p ${OBJECTDIR}
