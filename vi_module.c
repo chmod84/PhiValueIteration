@@ -20,7 +20,7 @@ double compute_q(struct state* current_state, int action_index) {
             exit(-1);
         }
 
-        q += action.probs[i]*(action.probs[i] + GAMMA * next_state->v);
+        q += action.probs[i]*(action.rewards[i] + GAMMA * next_state->v);
         //        printf("q=%f\n",q);
     }
     return q;

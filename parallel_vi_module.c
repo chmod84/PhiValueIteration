@@ -60,7 +60,8 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
     }
     for (i = 0; i < next_state_size; i++) {
         __assume_aligned(action.probs, 64);
-        qs[i] = action.probs[i]*(action.probs[i] + GAMMA * next_state[i]->v);
+        __assume_aligned(action.rewards, 64);
+        qs[i] = action.probs[i]*(action.rewards[i] + GAMMA * next_state[i]->v);
     }
 
     for (i = 0; i < next_state_size; i++) {
