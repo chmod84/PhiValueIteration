@@ -54,8 +54,7 @@ int read_file() {
                     perror("Unable to read the size of the next states. Exiting\n");
                     exit(-1);
                 }
-                //                printf("Next states size: %d\n", action->next_states_size);
-
+//                                printf("Next states size: %d\n", action->next_states_size);
                 action->next_states = malloc(action->next_states_size * sizeof (int));
                 action->probs = _mm_malloc(action->next_states_size * sizeof (double), 64);
                 action->rewards = _mm_malloc(action->next_states_size * sizeof (double), 64);
@@ -92,7 +91,7 @@ int read_file() {
                 //                }
             }
         }
-        state->v = 0;
+        state->v = (int)random();
         HASH_ADD_INT(states, hashcode, state);
     }
     printf("Received %d states\n", i);

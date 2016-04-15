@@ -62,6 +62,7 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
         __assume_aligned(action.probs, 64);
         __assume_aligned(action.rewards, 64);
         qs[i] = action.probs[i]*(action.rewards[i] + GAMMA * next_state[i]->v);
+        //        printf("Action prob: %f, Action reward: %f\n", action.probs[i], action.rewards[i]);
     }
 
     for (i = 0; i < next_state_size; i++) {
@@ -87,7 +88,7 @@ double parallel_perform_bellman_update(struct state* current_state, int my_index
         if (q[i] > max_q)
             max_q = q[i];
     }
-//    current_state->v = max_q;
+    //    current_state->v = max_q;
     return max_q;
 }
 
@@ -105,11 +106,16 @@ void* run_vi_worker(void* arg) {
         //        fprintf(stderr, "Current state: %d, value: %f\n", i, v);
         double max_q = parallel_perform_bellman_update(my_states[i], my_index);
         //        fprintf(stderr,"max_q=%f\n", max_q);
-        my_states[i] ->v = max_q;
         double diff = fabs(max_q - v);
-        if (diff > delta)
+//        printf("current q: %f, new q: %f, diff: %f\n", v, max_q, diff);
+        my_states[i] ->v = max_q;
+//        printf("diff: %f\n", diff);
+        if (diff > delta) {
+//            printf("yes: diff=%f, delta=%f\n", diff, delta);
             delta = diff;
+        }
         deltas[my_index] = delta;
+        //        printf("delta: %f\n", delta);
         i++;
     }
 }
@@ -174,7 +180,7 @@ void* run_vi_worker(void* arg) {
 //}
 
 void* run_vi_worker_wrapper(void* arg) {
-//    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
+    //    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     int thread_index = (int) arg;
     //    scatter_affinity(thread_index);
     int i, j;
@@ -201,10 +207,10 @@ int run_vi_parallel_wrapped() {
         memset(divided_states[i], 0, sizeof (struct state*) * states_per_thread);
     }
     struct state* current_state = states;
-    int processed_states=0;
+    int processed_states = 0;
     for (i = 0; i < thread_n; i++) {
-//        for (j = 0; j < states_per_thread && current_state != NULL; j++) {
-        for (j = 0; j < states_per_thread && processed_states<state_space_size; j++) {
+        //        for (j = 0; j < states_per_thread && current_state != NULL; j++) {
+        for (j = 0; j < states_per_thread && processed_states < state_space_size; j++) {
             divided_states[i][j] = current_state;
             current_state = (struct state*) (current_state->hh.next);
             processed_states++;
@@ -234,26 +240,26 @@ int run_vi_parallel_wrapped() {
         pthread_create(&threads[i], &pthread_custom_attr, run_vi_worker_wrapper, (void*) i);
     }
 
-    double min_delta = INFINITY;
+
     for (i = 0; i < iterations_n; i++) {
         pthread_barrier_wait(&barrier_before);
         //Computing min_delta;
-
+        double current_delta = 0;
         for (j = 0; j < thread_n; j++) {
-            //            printf("deltas[%d]=%f\n",j,deltas[j]);
-            if (deltas[j] < min_delta) {
-                min_delta = deltas[j];
+//            printf("deltas[%d]=%f\n", j, deltas[j]);
+            if (deltas[j] > current_delta) {
+                current_delta = deltas[j];
             }
         }
         //        printf("min_delta=%f\n",min_delta);
-        if (min_delta < max_delta) {
+        if (current_delta < max_delta) {
             completed = 1;
             //            for (j = 0; j < thread_n; j++) {
             //                pthread_cancel(threads[j]);
             //            }
         }
         pthread_barrier_wait(&barrier_after);
-        printf("Iteration %d, delta=%f\n", i, min_delta);
+        printf("Iteration %d, delta=%f\n", i, current_delta);
         if (completed) break;
     }
     //    printf("Iteration %d, delta=%f\n", i, min_delta);
