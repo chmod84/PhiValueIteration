@@ -12,14 +12,13 @@
 #include <fcntl.h>
 #include "input_file_module.h"
 
-
 int read_file() {
     int n;
-    int fd = open("/work/stefano/state_dumps/1572855.dump", O_RDONLY);
+    int fd = open("/work/stefano/state_dumps/12279.dump", O_RDONLY);
     if (fd < 0)
         perror("ERROR on open");
 
-    
+
     /* gethostbyaddr: determine who sent the message */
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
@@ -54,7 +53,7 @@ int read_file() {
                     perror("Unable to read the size of the next states. Exiting\n");
                     exit(-1);
                 }
-//                                printf("Next states size: %d\n", action->next_states_size);
+                //                                printf("Next states size: %d\n", action->next_states_size);
                 action->next_states = malloc(action->next_states_size * sizeof (int));
                 action->probs = _mm_malloc(action->next_states_size * sizeof (double), 64);
                 action->rewards = _mm_malloc(action->next_states_size * sizeof (double), 64);
@@ -91,7 +90,7 @@ int read_file() {
                 //                }
             }
         }
-        state->v = (int)random();
+        state->v = (int) random();
         HASH_ADD_INT(states, hashcode, state);
     }
     printf("Received %d states\n", i);
