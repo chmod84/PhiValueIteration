@@ -12,9 +12,9 @@
 #include <fcntl.h>
 #include "input_file_module.h"
 
-int read_file() {
+int read_file(char* path) {
     int n;
-    int fd = open("/work/stefano/state_dumps/1572855.dump", O_RDONLY);
+    int fd = open(path, O_RDONLY);
     if (fd < 0)
         perror("ERROR on open");
 

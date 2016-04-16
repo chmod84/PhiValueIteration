@@ -42,6 +42,16 @@ void scatter_affinity(int thread_id) {
     sched_setaffinity(0, len, &mask);
 }
 
+//void my_affinity(int thread_id) {
+//    cpu_set_t mask;
+//    unsigned int len = sizeof (mask);
+//    CPU_ZERO(&mask);
+//    int cpu = floor(thread_id/4)+1;
+//    CPU_SET(cpu, &mask);
+//    sched_setaffinity(0, len, &mask);
+//    printf("mapped thread %d on cpu %d\n", thread_id, cpu);
+//}
+
 void pre_reference_next_v() {
     struct state* state;
     for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
@@ -203,9 +213,8 @@ void* run_vi_worker(void* arg) {
 //}
 
 void* run_vi_worker_wrapper(void* arg) {
-    //    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     int thread_index = (int) arg;
-    //    scatter_affinity(thread_index);
+//        my_affinity(thread_index);
     int i, j;
     for (i = 0; i < iterations_n; i++) {
         run_vi_worker(thread_index);

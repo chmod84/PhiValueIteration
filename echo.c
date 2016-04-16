@@ -9,12 +9,12 @@
 struct state* states = NULL;
 int state_space_size = 0;
 int thread_n = 0;
-int iterations_n = 100;
+int iterations_n = 1000;
 double max_delta = 0.001;
 
 int main(int argc, char **argv) {
 //    receive_from_controller();
-    read_file();
+    read_file(argv[2]);
     printf("precomputing v\n");
     pre_reference_next_v();
     printf("done\n");
