@@ -42,6 +42,25 @@ void scatter_affinity(int thread_id) {
     sched_setaffinity(0, len, &mask);
 }
 
+void pre_reference_next_v() {
+    struct state* state;
+    for (state = states; state != NULL; state = (struct state*) (state->hh.next)) {
+        int i;
+        for (i = 0; i < state->action_size; i++) {
+            struct action *action = &state->actions[i];
+            int j;
+            action->next_state_v = malloc(sizeof(double*)*action->next_states_size);
+            for (j = 0; j < action->next_states_size; j++) {
+                struct state * next_state;
+                HASH_FIND_INT(states, &action->next_states[j], next_state);
+                action->next_state_v[j] = &(next_state->v);
+//                printf("address %x, value %f\n", &(next_state->v), next_state->v);
+            }
+            free(action->next_states);
+        }
+    }
+}
+
 double parallel_compute_q(struct state* current_state, int action_index, int my_index) {
     //    printf("inside compute_q\n");
     double q = 0;
@@ -51,17 +70,21 @@ double parallel_compute_q(struct state* current_state, int action_index, int my_
     double qs[next_state_size];
     //    #pragma simd
     struct state * next_state[next_state_size];
+    double v[next_state_size];
     for (i = 0; i < next_state_size; i++) {
-        struct timeval t1, t2;
-        //        gettimeofday(&t1, NULL);
-        HASH_FIND_INT(states, &action.next_states[i], next_state[i]);
-        //        gettimeofday(&t2, NULL);
-        //        hash_time[my_index] += ((t2.tv_sec - t1.tv_sec)*1000*1000)+(t2.tv_usec - t1.tv_usec);
+        v[i] = *action.next_state_v[i];
+//        struct timeval t1, t2;
+//        //        gettimeofday(&t1, NULL);
+//        HASH_FIND_INT(states, &action.next_states[i], next_state[i]);
+//        v[i] = next_state[i] ->v;
+//
+//        //        gettimeofday(&t2, NULL);
+//        //        hash_time[my_index] += ((t2.tv_sec - t1.tv_sec)*1000*1000)+(t2.tv_usec - t1.tv_usec);
     }
     for (i = 0; i < next_state_size; i++) {
         __assume_aligned(action.probs, 64);
         __assume_aligned(action.rewards, 64);
-        qs[i] = action.probs[i]*(action.rewards[i] + GAMMA * next_state[i]->v);
+        qs[i] = action.probs[i]*(action.rewards[i] + GAMMA * v[i]);
         //        printf("Action prob: %f, Action reward: %f\n", action.probs[i], action.rewards[i]);
     }
 
@@ -107,11 +130,11 @@ void* run_vi_worker(void* arg) {
         double max_q = parallel_perform_bellman_update(my_states[i], my_index);
         //        fprintf(stderr,"max_q=%f\n", max_q);
         double diff = fabs(max_q - v);
-//        printf("current q: %f, new q: %f, diff: %f\n", v, max_q, diff);
+        //        printf("current q: %f, new q: %f, diff: %f\n", v, max_q, diff);
         my_states[i] ->v = max_q;
-//        printf("diff: %f\n", diff);
+        //        printf("diff: %f\n", diff);
         if (diff > delta) {
-//            printf("yes: diff=%f, delta=%f\n", diff, delta);
+            //            printf("yes: diff=%f, delta=%f\n", diff, delta);
             delta = diff;
         }
         deltas[my_index] = delta;
@@ -246,7 +269,7 @@ int run_vi_parallel_wrapped() {
         //Computing min_delta;
         double current_delta = 0;
         for (j = 0; j < thread_n; j++) {
-//            printf("deltas[%d]=%f\n", j, deltas[j]);
+            //            printf("deltas[%d]=%f\n", j, deltas[j]);
             if (deltas[j] > current_delta) {
                 current_delta = deltas[j];
             }

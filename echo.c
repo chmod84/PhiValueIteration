@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 //    receive_from_controller();
     read_file();
     printf("precomputing v\n");
+    pre_reference_next_v();
     printf("done\n");
     //        print_states();
     struct timeval tv1, tv2, diff;

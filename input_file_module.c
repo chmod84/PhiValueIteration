@@ -14,7 +14,7 @@
 
 int read_file() {
     int n;
-    int fd = open("/work/stefano/state_dumps/12279.dump", O_RDONLY);
+    int fd = open("/work/stefano/state_dumps/1572855.dump", O_RDONLY);
     if (fd < 0)
         perror("ERROR on open");
 
@@ -90,8 +90,9 @@ int read_file() {
                 //                }
             }
         }
-        state->v = (int) random();
+        state->v = (double) random();
         HASH_ADD_INT(states, hashcode, state);
+//        printf("%d\n",state->hashcode);
     }
     printf("Received %d states\n", i);
     gettimeofday(&tv2, NULL);

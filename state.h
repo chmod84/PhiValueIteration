@@ -17,6 +17,7 @@ struct action {
     int* next_states;
     double* probs;// __attribute__((aligned(64)));
     double* rewards;
+    double **next_state_v;
 };
 
 struct state {
