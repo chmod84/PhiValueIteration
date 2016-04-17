@@ -120,6 +120,8 @@ int receive_from_controller() {
                 action->next_states = malloc(action->next_states_size * sizeof (int));
                 action->probs = _mm_malloc(action->next_states_size * sizeof (double), 64);
                 action->rewards = _mm_malloc(action->next_states_size * sizeof (double), 64);
+//                action->probs = malloc(action->next_states_size * sizeof (double));
+//                action->rewards = malloc(action->next_states_size * sizeof (double));
                 n = read(connfd, action->next_states, action->next_states_size * sizeof (int));
                 n = read(connfd, action->probs, action->next_states_size * sizeof (double));
                 n = read(connfd, action->rewards, action->next_states_size * sizeof (double));

@@ -57,6 +57,8 @@ int read_file(char* path) {
                 action->next_states = malloc(action->next_states_size * sizeof (int));
                 action->probs = _mm_malloc(action->next_states_size * sizeof (double), 64);
                 action->rewards = _mm_malloc(action->next_states_size * sizeof (double), 64);
+//                action->probs = malloc(action->next_states_size * sizeof (double));
+//                action->rewards = malloc(action->next_states_size * sizeof (double));
                 n = read(fd, action->next_states, action->next_states_size * sizeof (int));
                 n = read(fd, action->probs, action->next_states_size * sizeof (double));
                 n = read(fd, action->rewards, action->next_states_size * sizeof (double));
